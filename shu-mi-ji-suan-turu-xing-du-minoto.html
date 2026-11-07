@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>ライフパスナンバー計算｜生年月日で出す数秘術 - 星読みノート</title>
+    <meta name="description" content="生年月日を入れるだけで、ライフパスナンバーと2027年の個人年数が無料で計算できます。2027年の月ごとの個人月数の分類も表示。計算方法もすべて公開しています（星読みノート）。" />
+    <style>
+      :root {
+        --navy: #0f1e3d;
+        --navy-deep: #0a1730;
+        --navy-soft: #1b2f56;
+        --gold: #c9a227;
+        --gold-soft: #e6c65c;
+        --bg: #f6f3ec;
+        --surface: #ffffff;
+        --surface-2: #efe9dc;
+        --ink: #23202a;
+        --ink-soft: #5c5766;
+        --line: #ddd5c3;
+        --move: #b4551d;
+        --move-bg: #fbeedd;
+        --tidy: #2f6487;
+        --tidy-bg: #e5f0f7;
+        --face: #6b4fa1;
+        --face-bg: #efe9f7;
+        --error: #b3261e;
+        --focus: #c9a227;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1526;
+          --surface: #16233f;
+          --surface-2: #1d2c4c;
+          --ink: #ece7da;
+          --ink-soft: #b3abc4;
+          --line: #33436b;
+          --move: #f0a35e;
+          --move-bg: #3a2a18;
+          --tidy: #7db8dd;
+          --tidy-bg: #1c3049;
+          --face: #c3a6ec;
+          --face-bg: #2c2145;
+          --error: #ff9d94;
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+        line-height: 1.75;
+        font-size: 16px;
+        -webkit-text-size-adjust: 100%;
+      }
+      .serif { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; }
+
+      /* ---------- ヘッダー ---------- */
+      header.site {
+        background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+        color: #f2ecdc;
+        padding: 34px 20px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      header.site::before {
+        content: "";
+        position: absolute; inset: 0;
+        background-image:
+          radial-gradient(1.5px 1.5px at 12% 30%, rgba(230,198,92,.8) 50%, transparent 51%),
+          radial-gradient(1px 1px at 26% 70%, rgba(230,198,92,.5) 50%, transparent 51%),
+          radial-gradient(1.5px 1.5px at 82% 22%, rgba(230,198,92,.7) 50%, transparent 51%),
+          radial-gradient(1px 1px at 68% 62%, rgba(230,198,92,.45) 50%, transparent 51%),
+          radial-gradient(1px 1px at 92% 74%, rgba(230,198,92,.6) 50%, transparent 51%),
+          radial-gradient(1px 1px at 45% 18%, rgba(230,198,92,.4) 50%, transparent 51%);
+        pointer-events: none;
+      }
+      .brand { position: relative; }
+      .brand svg { display: block; margin: 0 auto 10px; }
+      .brand h1 {
+        margin: 0;
+        font-size: 30px;
+        letter-spacing: .14em;
+        font-weight: 600;
+        color: #f5efdd;
+      }
+      .brand .tagline {
+        margin: 8px auto 0;
+        max-width: 30em;
+        font-size: 13.5px;
+        color: #cdbf9d;
+      }
+      .brand .stance {
+        margin: 12px auto 0;
+        font-size: 12px;
+        color: #9fb0cf;
+        letter-spacing: .04em;
+      }
+
+      main { max-width: 720px; margin: 0 auto; padding: 0 16px 56px; }
+      section { margin-top: 40px; }
+      h2 {
+        font-size: 21px;
+        line-height: 1.5;
+        margin: 0 0 14px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--gold);
+        font-weight: 700;
+      }
+      h2 .accent { color: var(--navy-soft); }
+      @media (prefers-color-scheme: dark) { h2 .accent { color: var(--gold-soft); } }
+      p { margin: 0 0 12px; }
+      .lead { color: var(--ink-soft); font-size: 15px; }
+
+      /* ---------- 計算フォーム ---------- */
+      .tool {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 22px 18px 20px;
+        margin-top: 24px;
+        box-shadow: 0 2px 10px rgba(15,30,61,.08);
+      }
+      .tool label.field-label {
+        display: block;
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      .date-row { display: flex; gap: 10px; flex-wrap: wrap; }
+      .date-field { flex: 1 1 90px; min-width: 0; }
+      .date-field span {
+        display: block;
+        font-size: 12.5px;
+        color: var(--ink-soft);
+        margin-bottom: 4px;
+      }
+      .date-field input {
+        width: 100%;
+        font-size: 20px;
+        padding: 10px 8px;
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--ink);
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      .date-field input:focus-visible,
+      button:focus-visible, a:focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 2px;
+      }
+      .calc-btn {
+        display: block;
+        width: 100%;
+        margin-top: 18px;
+        padding: 14px;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        color: #fff8e6;
+        background: var(--navy);
+        border: 1px solid var(--gold);
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .calc-btn:hover { background: var(--navy-soft); }
+      .calc-btn:active { transform: translateY(1px); }
+      .error-msg {
+        display: none;
+        margin-top: 12px;
+        color: var(--error);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .error-msg.show { display: block; }
+      .hint { margin-top: 10px; font-size: 12.5px; color: var(--ink-soft); }
+
+      /* ---------- 結果 ---------- */
+      #result { display: none; margin-top: 26px; }
+      #result.show { display: block; }
+      .lp-card {
+        background: var(--navy);
+        color: #f2ecdc;
+        border-radius: 10px;
+        padding: 26px 20px 22px;
+        text-align: center;
+      }
+      .lp-card .lp-label { font-size: 13px; letter-spacing: .22em; color: var(--gold-soft); margin: 0; }
+      .lp-number {
+        font-size: 92px;
+        line-height: 1.1;
+        margin: 4px 0 0;
+        font-weight: 600;
+        color: #fff6da;
+        font-variant-numeric: tabular-nums;
+      }
+      .lp-theme { font-size: 20px; font-weight: 700; margin: 6px 0 4px; color: #f5efdd; }
+      .lp-desc { font-size: 14.5px; color: #cdbf9d; margin: 0 auto; max-width: 32em; }
+      .master-note {
+        display: none;
+        margin-top: 14px;
+        font-size: 13px;
+        background: rgba(201,162,39,.16);
+        border: 1px solid rgba(201,162,39,.55);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: #f0e3bd;
+        text-align: left;
+      }
+      .master-note.show { display: block; }
+
+      .py-card {
+        margin-top: 16px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .py-num {
+        font-size: 52px;
+        line-height: 1;
+        font-weight: 700;
+        color: var(--navy-soft);
+        min-width: 64px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      @media (prefers-color-scheme: dark) { .py-num { color: var(--gold-soft); } }
+      .py-card h3 { margin: 0 0 4px; font-size: 16px; }
+      .py-card p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+
+      .months-block { margin-top: 22px; }
+      .months-block h3 { font-size: 16.5px; margin: 0 0 6px; }
+      .months-intro { font-size: 14px; color: var(--ink-soft); }
+      .month-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .month-cell {
+        border-radius: 8px;
+        padding: 10px 6px 8px;
+        text-align: center;
+        border: 1px solid var(--line);
+      }
+      .month-cell .m { display: block; font-size: 15px; font-weight: 700; }
+      .month-cell .cat { display: block; font-size: 11.5px; line-height: 1.45; margin-top: 2px; }
+      .month-cell.move { background: var(--move-bg); color: var(--move); border-color: transparent; }
+      .month-cell.tidy { background: var(--tidy-bg); color: var(--tidy); border-color: transparent; }
+      .month-cell.face { background: var(--face-bg); color: var(--face); border-color: transparent; }
+      .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
+      .legend span::before {
+        content: "";
+        display: inline-block;
+        width: 10px; height: 10px;
+        border-radius: 3px;
+        margin-right: 6px;
+        vertical-align: -1px;
+      }
+      .legend .lg-move::before { background: var(--move); }
+      .legend .lg-tidy::before { background: var(--tidy); }
+      .legend .lg-face::before { background: var(--face); }
+
+      details.steps {
+        margin-top: 22px;
+        background: var(--surface-2);
+        border-radius: 10px;
+        padding: 14px 16px;
+      }
+      details.steps summary {
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 15px;
+      }
+      details.steps .step-body { margin-top: 10px; font-size: 14.5px; }
+      details.steps code {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 13.5px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 1px 6px;
+        white-space: nowrap;
+      }
+      details.steps p { margin-bottom: 8px; }
+
+      /* ---------- 解説 ---------- */
+      .method ol, .method ul { margin: 0 0 12px; padding-left: 1.4em; }
+      .method li { margin-bottom: 6px; }
+      .formula {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--gold);
+        border-radius: 6px;
+        padding: 12px 16px;
+        margin: 12px 0;
+        font-size: 15px;
+      }
+      .example {
+        background: var(--surface-2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14.5px;
+        margin: 12px 0;
+      }
+      .example strong { display: block; margin-bottom: 4px; }
+      .theme-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14.5px; }
+      .theme-table th, .theme-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      .theme-table th { background: var(--surface-2); font-size: 13px; color: var(--ink-soft); }
+      .theme-table .num { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+      /* ---------- note導線 ---------- */
+      .note-cards { display: grid; gap: 14px; }
+      .note-card {
+        display: block;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 18px;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .note-card:hover { border-color: var(--gold); }
+      .note-card .kicker { font-size: 12px; letter-spacing: .1em; color: var(--gold); font-weight: 700; margin: 0 0 4px; }
+      .note-card h3 { margin: 0 0 6px; font-size: 16.5px; line-height: 1.55; }
+      .note-card p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+      .note-card .price { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--navy-soft); }
+      @media (prefers-color-scheme: dark) { .note-card .price { color: var(--gold-soft); } }
+      .social-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+      .social-links a {
+        flex: 1 1 200px;
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14.5px;
+        text-decoration: none;
+        border: 1.5px solid var(--navy);
+        color: var(--navy);
+        background: var(--surface);
+      }
+      .social-links a.primary { background: var(--navy); color: #f5efdd; border-color: var(--gold); }
+      @media (prefers-color-scheme: dark) {
+        .social-links a { border-color: var(--gold); color: var(--gold-soft); background: var(--surface); }
+        .social-links a.primary { background: var(--navy-soft); color: #f5efdd; }
+      }
+
+      footer.site {
+        margin-top: 48px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+      footer.site p { margin-bottom: 8px; }
+      @media (max-width: 480px) {
+        .brand h1 { font-size: 25px; }
+        .lp-number { font-size: 76px; }
+        .month-grid { grid-template-columns: repeat(3, 1fr); }
+        .py-card { gap: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site">
+      <div class="brand">
+        <svg width="64" height="52" viewBox="0 0 64 52" role="img" aria-label="三日月と開いた本のモチーフ">
+          <path d="M44 4a15 15 0 1 0 6 26A17 17 0 0 1 44 4Z" fill="#c9a227"/>
+          <path d="M32 30c-5-3.6-11-5-17-4.4V44c6-.6 12 .8 17 4.4 5-3.6 11-5 17-4.4V25.6C43 25 37 26.4 32 30Z" fill="none" stroke="#e6c65c" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M32 30v18.4" stroke="#e6c65c" stroke-width="2.4"/>
+        </svg>
+        <h1 class="serif">星読みノート</h1>
+        <p class="tagline">生年月日から出す、数秘術の無料計算ツール</p>
+        <p class="stance">占いを勉強中の個人が運営しています。計算方法はすべて公開し、検算できる形にしています。</p>
+      </div>
+    </header>
+
+    <main>
+      <!-- 計算ツール -->
+      <section class="tool" aria-labelledby="tool-title">
+        <h2 id="tool-title" style="border:none;padding:0;margin-bottom:6px;">ライフパスナンバー 計算ツール</h2>
+        <p class="lead">生年月日を入力すると、ライフパスナンバーと2027年の個人年数、月ごとの個人月数の分類がその場で出ます。入力した生年月日はこのページの外に送信されません。</p>
+
+        <form id="calc-form" novalidate>
+          <label class="field-label" id="birth-label">あなたの生年月日</label>
+          <div class="date-row" role="group" aria-labelledby="birth-label">
+            <div class="date-field">
+              <span>年（西暦）</span>
+              <input type="number" id="birth-year" inputmode="numeric" min="1900" max="2100" placeholder="1990" autocomplete="bday-year" />
+            </div>
+            <div class="date-field">
+              <span>月</span>
+              <input type="number" id="birth-month" inputmode="numeric" min="1" max="12" placeholder="5" autocomplete="bday-month" />
+            </div>
+            <div class="date-field">
+              <span>日</span>
+              <input type="number" id="birth-day" inputmode="numeric" min="1" max="31" placeholder="14" autocomplete="bday-day" />
+            </div>
+          </div>
+          <button type="submit" class="calc-btn">計算する</button>
+          <p class="error-msg" id="error-msg" role="alert"></p>
+          <p class="hint">例：1990年5月14日生まれ → ライフパスナンバーは 11 になります。</p>
+        </form>
+
+        <!-- 結果 -->
+        <div id="result" aria-live="polite">
+          <div class="lp-card">
+            <p class="lp-label">ライフパスナンバー</p>
+            <p class="lp-number serif" id="lp-number">–</p>
+            <p class="lp-theme" id="lp-theme"></p>
+            <p class="lp-desc" id="lp-desc"></p>
+            <p class="master-note" id="master-note"></p>
+          </div>
+
+          <div class="py-card">
+            <div class="py-num serif" id="py-number">–</div>
+            <div>
+              <h3>2027年の個人年数は <span id="py-number-inline"></span></h3>
+              <p id="py-desc"></p>
+            </div>
+          </div>
+
+          <div class="months-block">
+            <h3>2027年の個人月数（月ごとの分類）</h3>
+            <p class="months-intro">個人年数に各月の数を足して出した「個人月数」を、3つのタイプに分けたものです。予定を置くときの目安としてどうぞ。</p>
+            <div class="month-grid" id="month-grid"></div>
+            <div class="legend">
+              <span class="lg-move">動く月：表に出る行動に向く月</span>
+              <span class="lg-tidy">整える月：見直しや休息の設計に向く月</span>
+              <span class="lg-face">人・暮らしと向き合う月</span>
+            </div>
+          </div>
+
+          <details class="steps" id="steps">
+            <summary>計算過程を見る（検算用）</summary>
+            <div class="step-body" id="step-body"></div>
+          </details>
+        </div>
+      </section>
+
+      <!-- 計算方法の解説 -->
+      <section class="method" aria-labelledby="method-title">
+        <h2 id="method-title">計算方法の解説 <span class="accent">— ライフパスナンバー 計算と個人年数 2027</span></h2>
+        <p>このページで使っている計算ルールは、note「星読みノート」の記事と同じものです。数秘術には流派があり、計算や解釈のしかたが少しずつ違う場合がありますが、ここでは下記の方法に統一しています。</p>
+
+        <h3>ライフパスナンバーの出し方</h3>
+        <ol>
+          <li>生年月日の数字を、すべてバラバラにして足します（例：1990年5月14日 → 1＋9＋9＋0＋0＋5＋1＋4＝29）。</li>
+          <li>合計が2桁になったら、その数字同士を足して1桁に直していきます（29 → 2＋9＝11）。</li>
+          <li>ただし、途中で <strong>11・22・33</strong> になったら、そこで止めます。これらは「マスターナンバー」と呼ばれ、1桁に直さずそのままライフパスナンバーとして読みます。</li>
+        </ol>
+        <div class="example">
+          <strong>計算例</strong>
+          1990年5月14日生まれ：1＋9＋9＋0＋0＋5＋1＋4＝29 → 2＋9＝11。途中で11になったので、ライフパスナンバーは「11」です。<br />
+          1992年3月4日生まれ：1＋9＋9＋2＋0＋3＋0＋4＝28 → 2＋8＝10 → 1＋0＝1。ライフパスナンバーは「1」です。
+        </div>
+
+        <h3>個人年数 2027 の出し方</h3>
+        <p>個人年数は、その年にめぐる自分の数のことです。2027年の個人年数は、次の式で出します。</p>
+        <div class="formula">個人年数 ＝（誕生日の「月」と「日」の数字をすべて足して1桁にした数）＋（2＋0＋2＋7＝11）→ 合計を1桁に直す</div>
+        <div class="example">
+          <strong>計算例</strong>
+          4月1日生まれ：0＋4＋0＋1＝5。5＋11＝16 → 1＋6＝7。個人年数は「7」です。<br />
+          12月25日生まれ：1＋2＋2＋5＝10 → 1＋0＝1。1＋11＝12 → 1＋2＝3。個人年数は「3」です。
+        </div>
+
+        <h3>個人月数の出し方と分類</h3>
+        <p>個人月数は、個人年数にその月の数を足して、1桁に直したものです。このページでは、個人月数を次の3つに分類しています。</p>
+        <ul>
+          <li><strong>動く月</strong>（個人月数 1・3・5・8）：申し込み、挑戦、発信など、表に出る行動に向く月</li>
+          <li><strong>整える月</strong>（個人月数 2・4・7・9）：見直し、整理、勉強、休息の設計に向く月</li>
+          <li><strong>人・暮らしと向き合う月</strong>（個人月数 6）：家族や身近な人、住まいなどに時間を使う月</li>
+        </ul>
+        <p>使い方のコツは、動く月に全部を詰め込まないことです。動く月は「表に出す行動を1つ」、整える月は「土台の見直しを1つ」というように、月ごとに役割を1つ決めるだけでも、1年の流れがつかみやすくなります。</p>
+
+        <h3>ライフパスナンバー早見（テーマ一覧）</h3>
+        <table class="theme-table">
+          <thead><tr><th>数</th><th>テーマ</th></tr></thead>
+          <tbody id="theme-tbody"></tbody>
+        </table>
+        <p class="lead">マスターナンバー（11・22・33）は、1〜9の数より上でも下でもありません。読み方のクセが少し違う数として扱っています。11は2、22は4、33は6の性質も併せ持つため、1桁に直した数のテーマと重ねて読むのがおすすめです。</p>
+      </section>
+
+      <!-- note導線 -->
+      <section aria-labelledby="note-title">
+        <h2 id="note-title">もっと詳しく読みたい方へ <span class="accent">— noteの記事</span></h2>
+        <p class="lead">このツールで出た数字をもとに、2027年のテーマや月ごとの過ごし方を掘り下げた記事をnoteで公開しています。各記事とも、計算方法は無料部分で公開しています。</p>
+        <div class="note-cards">
+          <a class="note-card" href="https://note.com/holy_whale4290/n/ne2088f46e79b" target="_blank" rel="noopener">
+            <p class="kicker">記事 1 ｜ ライフパス × 2027年</p>
+            <h3>生年月日を足すだけ｜ライフパスナンバーで読む2027年：あなたのテーマと『動く月・整える月』早見表（自己理解ワーク付き）</h3>
+            <p>ライフパス1〜9それぞれの2027年のテーマと、個人年数の早見表、自己理解ワークシートを収録。</p>
+            <p class="price">noteで読む（500円）→</p>
+          </a>
+          <a class="note-card" href="https://note.com/holy_whale4290/n/n87db8e54f86a" target="_blank" rel="noopener">
+            <p class="kicker">記事 2 ｜ 個人年数カレンダー</p>
+            <h3>個人年数で読む2027年12か月カレンダー</h3>
+            <p>あなたの個人年数ごとに、2027年の12か月を月別に読み解くカレンダー形式の記事です。</p>
+            <p class="price">noteで読む（500円）→</p>
+          </a>
+          <a class="note-card" href="https://note.com/holy_whale4290/n/nc6fa3a0b9273" target="_blank" rel="noopener">
+            <p class="kicker">記事 3 ｜ マスターナンバー</p>
+            <h3>計算で11・22・33が出た人へ｜マスターナンバーの読み方と2027年（数秘術）</h3>
+            <p>計算の途中で11・22・33になった人のための深掘り。1桁に直した数と重ねて読む方法も解説します。</p>
+            <p class="price">noteで読む（500円）→</p>
+          </a>
+        </div>
+        <div class="social-links">
+          <a class="primary" href="https://note.com/holy_whale4290" target="_blank" rel="noopener">note「星読みノート」のページへ</a>
+          <a href="https://www.threads.com/@hoshi.yomi.note" target="_blank" rel="noopener">Threads @hoshi.yomi.note をフォロー</a>
+        </div>
+      </section>
+
+      <footer class="site">
+        <p>このページは、数秘術をエンターテインメントとして楽しむためのものです。未来や結果を保証するものではありません。大切な判断は、ご自身の状況に合わせて行ってください。</p>
+        <p>運営：星読みノート（占い勉強中の個人）。個人鑑定は行っていません。医療・健康、投資やギャンブルなどお金の運用、法律に関することは扱っていません。</p>
+        <p>入力した生年月日は、お使いのブラウザの中だけで計算され、外部に送信されることはありません。</p>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var THEMES = {
+          1:  { theme: "始める力",   sub: "自分の足で立つ",       desc: "自分の足で立ち、自分の決断で物事を始める力がテーマの数です。2027年は、その「始める力」に、決める前に一度だけ人の声を聞くひと手間を足すと、流れが整いやすくなります。" },
+          2:  { theme: "つなぐ力",   sub: "人との間合いをはかる", desc: "人と人との間合いをはかり、場をつなぐ力がテーマの数です。感じ取る力が強い分、自分のペースを取り戻す時間を先に予定へ入れておくことが助けになります。" },
+          3:  { theme: "表す力",     sub: "言葉と楽しさ",         desc: "言葉や表現を通して、楽しさを表に出す力がテーマの数です。思いつきを小さく形にして見せることが、2027年の運び方に合いそうです。" },
+          4:  { theme: "積む力",     sub: "土台を固める",         desc: "土台を固め、コツコツ積み上げる力がテーマの数です。派手な変化より、手順や置き場所など「仕組みを1つ整える」ことに力が出やすい年まわりです。" },
+          5:  { theme: "動く力",     sub: "変化と自由",           desc: "変化の中を動き、自由に試す力がテーマの数です。動く範囲を先に決めておくと、変化の波に振り回されず、自分のペースで進みやすくなります。" },
+          6:  { theme: "育てる力",   sub: "人と暮らしを整える",   desc: "身近な人と暮らしを整え、育てる力がテーマの数です。頼られる場面では、引き受ける範囲と量を先に言葉にしておくことが、自分を守る鍵になります。" },
+          7:  { theme: "深める力",   sub: "一人の時間と探究",     desc: "一人の時間の中で考えを深め、探究する力がテーマの数です。静かな時間を予定として確保することが、判断の質を支えてくれます。" },
+          8:  { theme: "回す力",     sub: "成果とお金の循環",     desc: "成果やお金、人とのやりとりを回していく力がテーマの数です。出ていくものと入ってくるものの流れを眺める習慣が、2027年の土台になります。" },
+          9:  { theme: "手放す力",   sub: "締めくくりと次への準備", desc: "物事を締めくくり、役目を終えたものを手放して次へ備える力がテーマの数です。終わらせることを先に決めると、新しい流れの置き場所ができます。" },
+          11: { theme: "感じ取る力", sub: "直感とつながり",       desc: "言葉になる前の空気や感覚を感じ取る力がテーマの数です。2の性質（つなぐ力）も併せ持ちます。2027年は年の数（11）とも重なる年で、静かな時間を予定に入れておくことが助けになります。", master: true, base: 2 },
+          22: { theme: "形にする力", sub: "大きな構想を現実に",   desc: "大きな構想を、手順や仕組みに落として現実の形にする力がテーマの数です。4の性質（積む力）も併せ持ちます。構想を広げるより「土台を1つ作る」ことに絞るのがおすすめです。", master: true, base: 4 },
+          33: { theme: "支える力",   sub: "人への献身と表現",     desc: "人のために動き、支える力がテーマの数です。6の性質（育てる力）も併せ持ちます。優しさそのものより「渡す量と相手を自分で選ぶこと」がテーマになります。", master: true, base: 6 }
+        };
+
+        var PY_DESC = {
+          1: "新しい流れが始まる年。2027年は「始め方」を自分で決めることがテーマになります。",
+          2: "人との関係やペース配分がテーマの年。急がず、間合いをはかりながら進む年まわりです。",
+          3: "表現と楽しさがテーマの年。思いついたことを小さく表に出す動きが合いそうです。",
+          4: "土台づくりがテーマの年。手順や暮らしの仕組みを整えることに力が出やすくなります。",
+          5: "変化と移動がテーマの年。試す範囲を決めて動くと、流れに乗りやすくなります。",
+          6: "人と暮らしに向き合うことがテーマの年。引き受ける量を自分で選ぶことが鍵です。",
+          7: "深めることがテーマの年。一人の時間と学びに比重を置くと整いやすくなります。",
+          8: "成果と循環がテーマの年。出入りを眺めながら、回す仕組みを整える年まわりです。",
+          9: "締めくくりがテーマの年。終えるものを決めることで、次への準備が進みます。"
+        };
+
+        function digitSum(n) {
+          var s = 0;
+          while (n > 0) { s += n % 10; n = Math.floor(n / 10); }
+          return s;
+        }
+        // 1桁になるまで足す（途中で止めない版）。過程も返す
+        function reduceFull(n) {
+          var steps = [n];
+          while (n > 9) { n = digitSum(n); steps.push(n); }
+          return { value: n, steps: steps };
+        }
+        // ライフパス用：11・22・33で止める
+        function reduceLifePath(n) {
+          var steps = [n];
+          while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+            n = digitSum(n);
+            steps.push(n);
+          }
+          return { value: n, steps: steps };
+        }
+        function classify(pm) {
+          if (pm === 6) return { key: "face", label: "人・暮らしと向き合う月" };
+          if (pm === 1 || pm === 3 || pm === 5 || pm === 8) return { key: "move", label: "動く月" };
+          return { key: "tidy", label: "整える月" }; // 2,4,7,9
+        }
+        function pad2(n) { return (n < 10 ? "0" : "") + n; }
+
+        var form = document.getElementById("calc-form");
+        var errEl = document.getElementById("error-msg");
+        var resultEl = document.getElementById("result");
+
+        // テーマ早見表を生成
+        var tbody = document.getElementById("theme-tbody");
+        [1,2,3,4,5,6,7,8,9,11,22,33].forEach(function (n) {
+          var tr = document.createElement("tr");
+          var tdN = document.createElement("td"); tdN.className = "num"; tdN.textContent = n;
+          var tdT = document.createElement("td"); tdT.textContent = THEMES[n].theme + "／" + THEMES[n].sub;
+          tr.appendChild(tdN); tr.appendChild(tdT);
+          tbody.appendChild(tr);
+        });
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          errEl.className = "error-msg";
+          errEl.textContent = "";
+
+          var y = parseInt(document.getElementById("birth-year").value, 10);
+          var m = parseInt(document.getElementById("birth-month").value, 10);
+          var d = parseInt(document.getElementById("birth-day").value, 10);
+
+          function fail(msg) {
+            errEl.textContent = msg;
+            errEl.className = "error-msg show";
+            resultEl.className = "";
+          }
+          if (isNaN(y) || isNaN(m) || isNaN(d)) { fail("生年月日（年・月・日）をすべて入力してください。"); return; }
+          if (y < 1900 || y > 2100) { fail("年は1900〜2100の範囲で入力してください。"); return; }
+          if (m < 1 || m > 12) { fail("月は1〜12で入力してください。"); return; }
+          var daysInMonth = new Date(y, m, 0).getDate();
+          if (d < 1 || d > daysInMonth) { fail(y + "年" + m + "月は" + daysInMonth + "日までです。日を確認してください。"); return; }
+
+          // --- ライフパス ---
+          var ymd = String(y) + pad2(m) + pad2(d);
+          var digits = ymd.split("").map(Number);
+          var total = digits.reduce(function (a, b) { return a + b; }, 0);
+          var lp = reduceLifePath(total);
+          var info = THEMES[lp.value];
+
+          // --- 個人年数 2027 ---
+          var mdDigits = (pad2(m) + pad2(d)).split("").map(Number);
+          var mdTotal = mdDigits.reduce(function (a, b) { return a + b; }, 0);
+          var mdReduced = reduceFull(mdTotal);
+          var pyRaw = mdReduced.value + 11;
+          var py = reduceFull(pyRaw);
+
+          // --- 表示 ---
+          document.getElementById("lp-number").textContent = lp.value;
+          document.getElementById("lp-theme").textContent = info.theme + " ― " + info.sub;
+          document.getElementById("lp-desc").textContent = info.desc;
+          var masterNote = document.getElementById("master-note");
+          if (info.master) {
+            masterNote.textContent = "あなたの数はマスターナンバー「" + lp.value + "」です。1桁に直した数「" + info.base + "」（" + THEMES[info.base].theme + "）の性質も併せ持つとされ、2つの読み方を重ねて読むのがおすすめです。マスターナンバーは他の数より上でも下でもなく、読み方のクセが少し違う数です。詳しくは下の記事3で解説しています。";
+            masterNote.className = "master-note show";
+          } else {
+            masterNote.className = "master-note";
+            masterNote.textContent = "";
+          }
+
+          document.getElementById("py-number").textContent = py.value;
+          document.getElementById("py-number-inline").textContent = py.value;
+          document.getElementById("py-desc").textContent = PY_DESC[py.value];
+
+          // --- 個人月数グリッド ---
+          var grid = document.getElementById("month-grid");
+          grid.innerHTML = "";
+          for (var month = 1; month <= 12; month++) {
+            var pm = reduceFull(py.value + month).value;
+            var c = classify(pm);
+            var cell = document.createElement("div");
+            cell.className = "month-cell " + c.key;
+            var sm = document.createElement("span"); sm.className = "m"; sm.textContent = month + "月";
+            var sc = document.createElement("span"); sc.className = "cat"; sc.textContent = c.label.replace("人・暮らしと向き合う月", "人・暮らし向き合う月");
+            cell.appendChild(sm); cell.appendChild(sc);
+            grid.appendChild(cell);
+          }
+
+          // --- 計算過程 ---
+          var sb = document.getElementById("step-body");
+          sb.innerHTML = "";
+          function addP(html) { var p = document.createElement("p"); p.innerHTML = html; sb.appendChild(p); }
+          function code(s) { return "<code>" + s + "</code>"; }
+          addP("<strong>ライフパスナンバー：</strong>" + code(digits.join("＋")) + " ＝ " + total +
+               (lp.steps.length > 1 ? " → " + lp.steps.slice(1).map(function (v, i, a) {
+                  var prev = lp.steps[i];
+                  return code(String(prev).split("").join("＋")) + " ＝ " + v;
+                }).join(" → ") : "") +
+               "。ライフパスナンバーは <strong>" + lp.value + "</strong> です。" +
+               (info.master ? "（" + lp.value + " はマスターナンバーのため、1桁に直さずここで止めます）" : ""));
+          addP("<strong>個人年数（2027年）：</strong>誕生日の月日 " + code(mdDigits.join("＋")) + " ＝ " + mdTotal +
+               (mdReduced.steps.length > 1 ? " → " + mdReduced.value : "") +
+               "。これに2027年の数 " + code("2＋0＋2＋7＝11") + " を足して " + mdReduced.value + "＋11＝" + pyRaw +
+               (py.steps.length > 1 ? " → " + py.value : "") +
+               "。2027年の個人年数は <strong>" + py.value + "</strong> です。");
+          addP("<strong>個人月数：</strong>各月は「個人年数 " + py.value + " ＋ その月の数」を1桁に直したものです（例：" + py.value + "＋1月＝" + (py.value + 1) + (py.value + 1 > 9 ? " → " + reduceFull(py.value + 1).value : "") + "）。");
+
+          resultEl.className = "show";
+          document.getElementById("steps").open = false;
+          resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      })();
+    </script>
+  </body>
+</html>
